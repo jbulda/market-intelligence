@@ -2,109 +2,102 @@ import { useState, useEffect } from 'react';
 import MetricCard from './components/MetricCard';
 import { Navbar } from './components/Navbar';
 
+const fallbackData = [
+    { id: 'AAPL', name: 'Apple', price: 266.98, change: -1.50 },
+    { id: 'MSFT', name: 'Microsoft', price: 420.22, change: 0.45 },
+    { id: 'NVDA', name: 'Nvidia', price: 850.10, change: 2.30 },
+    { id: 'BTC', name: 'Bitcoin', price: 64200, change: -0.80 }
+];
+
 function App() {
-    const [cryptoData, setCryptoData] = useState(null);
+    const [marketData, setMarketData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // Add this state
-    const stockSymbols = ['AAPL', 'NVDA', 'AMD', 'INTC', '005930.KS'];
+    const [error, setError] = useState(null);
+
+    // One request, all data points. YH Finance uses "-USD" for crypto.
+    const symbols = 'BTC-USD,ETH-USD,AAPL,NVDA,AMD,INTC';
 
     useEffect(() => {
-        const fetchAllData = async () => {
-            setLoading(true);
-            try {
-                // 1. Fetch Crypto (Existing)
-                const cryptoRes = await fetch(
-                    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum&order=market_cap_desc'
-                );
-                const cryptos = await cryptoRes.json();
+        const fetchData = async () => {
+            if (marketData.length > 0) return;
 
-                // 2. Fetch Stocks (using a public proxy for Yahoo Finance)
-                // Note: In a real enterprise app, you'd use a backend to hide an API Key
-                const stocks = await Promise.all(stockSymbols.map(async (symbol) => {
-                    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=1d`);
-                    const json = await res.json();
-                    const result = json.chart.result[0];
-                    return {
-                        id: symbol,
-                        name: symbol === '005930.KS' ? 'SAMSUNG' : symbol,
-                        current_price: result.meta.regularMarketPrice,
-                        price_change_percentage_24h: ((result.meta.regularMarketPrice - result.meta.chartPreviousClose) / result.meta.chartPreviousClose) * 100
-                    };
+            try {
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        'X-RapidAPI-Key': import.meta.env.VITE_RAPID_API_KEY.trim(),
+                        'X-RapidAPI-Host': 'yahoo-finance15.p.rapidapi.com'
+                    }
+                };
+
+                // This endpoint supports multiple tickers again based on your result!
+                const response = await fetch(
+                    'https://yahoo-finance15.p.rapidapi.com/api/v1/markets/stock/quotes?ticker=AAPL,MSFT,NVDA,AMD,BTC-USD,ETH-USD',
+                    options
+                );
+
+                const result = await response.json();
+
+                // Extract the array from the 'body' property
+                const rawData = result?.body || [];
+
+                if (rawData.length === 0) throw new Error("Empty body received");
+
+                const cleanData = rawData.map(item => ({
+                    id: item.symbol,
+                    // Prioritize Display Name (Apple), then Short Name (Apple Inc.), then Symbol (AAPL)
+                    name: item.displayName || item.shortName || item.symbol,
+                    price: item.regularMarketPrice,
+                    change: item.regularMarketChangePercent
                 }));
 
-                setCryptoData([...cryptos, ...stocks]);
+                setMarketData(cleanData);
                 setError(null);
             } catch (err) {
-                setError("SYSTEM_OVERLOAD: Rate limit hit or network failure.");
+                console.error("Dashboard Sync Error:", err.message);
+                setError("SYSTEM_OFFLINE: Emergency Data Active");
+                setMarketData(fallbackData);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchAllData();
-    }, []);
+        fetchData();
+    }, []); // Empty dependency array = Runs once on load
 
-    // use for testing
-    // useEffect(() => {
-    //     const mockData = [
-    //         { id: 'aapl', name: 'Apple', current_price: 185.92, price_change_percentage_24h: 1.2 },
-    //         { id: 'nvda', name: 'NVIDIA', current_price: 875.21, price_change_percentage_24h: 4.5 },
-    //         { id: 'amd', name: 'AMD', current_price: 170.12, price_change_percentage_24h: -0.8 },
-    //         { id: 'intc', name: 'Intel', current_price: 43.50, price_change_percentage_24h: -1.5 },
-    //         { id: 'samsung', name: 'Samsung', current_price: 72400, price_change_percentage_24h: 0.5 },
-    //     ];
-    //     setCryptoData(mockData);
-    //     setLoading(false);
-    //     }, []);
-
-    if (loading) return <div style={{ color: '#4ade80', padding: '40px' }}>INITIALIZING SYSTEM...</div>;
+    if (loading) return <div style={styles.loading}>ACCESSING ENCRYPTED TERMINAL...</div>;
 
     return (
-        <>
+        <div style={styles.container}>
             <Navbar />
-            <div style={styles.container}>
-                <h1 style={styles.title}>Market Intelligence Terminal</h1>
+            <div style={styles.contentWrapper}>
+                <h1 style={styles.title}>MARKET INTELLIGENCE TERMINAL</h1>
+
+                {error && <div style={styles.errorTag}>[!] {error}</div>}
+
                 <div style={styles.grid}>
-                    {cryptoData?.map((coin) => (
+                    {marketData.map((item) => (
                         <MetricCard
-                            key={coin.id}
-                            label={coin.name}
-                            value={`$${coin.current_price.toLocaleString()}`}
-                            trend={coin.price_change_percentage_24h > 0 ? 'up' : 'down'}
-                            percentage={Math.abs(coin.price_change_percentage_24h).toFixed(2)}
+                            key={item.id}
+                            label={item.name}
+                            value={`$${item.price.toFixed(2)}`} // Formatting here keeps the component clean
+                            trend={item.change > 0 ? 'up' : 'down'}
+                            percentage={Math.abs(item.change).toFixed(2)}
                         />
                     ))}
-                    {error && (
-                        <div style={{ color: '#f87171', border: '1px solid #f87171', padding: '10px', marginBottom: '20px' }}>
-                            CRITICAL FAILURE: {error}. API rate limit likely exceeded. Please wait 60 seconds.
-                        </div>
-                    )}
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
 const styles = {
-    container: {
-        backgroundColor: '#0a0a0a',
-        minHeight: '100vh',
-        padding: '40px',
-        fontFamily: 'monospace'
-    },
-    title: {
-        color: '#fff',
-        borderBottom: '1px solid #333',
-        paddingBottom: '10px',
-        marginBottom: '30px',
-        fontSize: '1.2rem',
-        textTransform: 'uppercase'
-    },
-    grid: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '20px'
-    }
+    container: { backgroundColor: '#0a0a0a', minHeight: '100vh', width: '100%', color: '#fff', fontFamily: 'monospace' },
+    contentWrapper: { padding: '40px', maxWidth: '1400px', margin: '0 auto' },
+    loading: { color: '#4ade80', padding: '40px', background: '#0a0a0a', height: '100vh', fontFamily: 'monospace' },
+    errorTag: { color: '#ff4444', marginBottom: '20px', fontSize: '0.8rem', border: '1px solid #ff4444', padding: '5px', display: 'inline-block' },
+    title: { borderBottom: '1px solid #333', paddingBottom: '15px', marginBottom: '40px', fontSize: '1.4rem', letterSpacing: '2px' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }
 };
 
 export default App;
