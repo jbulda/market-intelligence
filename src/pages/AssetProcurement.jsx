@@ -128,8 +128,8 @@ const AssetProcurement = () => {
                         <div key={product.id} style={styles.card}>
                             <div style={styles.cardHeader}>
                                 <div style={styles.statusGroup}><div style={styles.pulseDot}></div>
-                                <span style={styles.idText}>{product.id}</span>
-                            </div>
+                                    <span style={styles.idText}>{product.id}</span>
+                                </div>
                                 <span style={styles.categoryLabel}>{product.category}</span>
                             </div>
                             <div style={styles.content}>
@@ -145,7 +145,17 @@ const AssetProcurement = () => {
                                 </div>
                                 <div style={styles.footer}>
                                     <span style={styles.price}>${product.price}</span>
-                                    <button onClick={() => toggleProcure(product)} style={styles.btn}>
+                                    <button
+                                        onClick={() => toggleProcure(product)}
+                                        style={{
+                                            ...styles.btn,
+                                            // Dynamic color inversion
+                                            backgroundColor: manifest.find(m => m.id === product.id) ? '#4ade80' : '#0f172a',
+                                            color: manifest.find(m => m.id === product.id) ? '#0b0e14' : '#4ade80',
+                                            fontWeight: manifest.find(m => m.id === product.id) ? 'bold' : 'normal',
+                                            transition: 'all 0.2s ease' // Smooth transition for the inversion
+                                        }}
+                                    >
                                         {manifest.find(m => m.id === product.id) ? 'COMMITTED' : 'PROCURE'}
                                     </button>
                                 </div>
@@ -267,16 +277,16 @@ const styles = {
         display: 'flex', flexDirection: 'column', height: '100%'
     },
     cardHeader: { padding: '10px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', borderBottom: '1px solid #e2e8f0' },
-    statusGroup: { 
-        display: 'flex', 
-        alignItems: 'center', 
+    statusGroup: {
+        display: 'flex',
+        alignItems: 'center',
         flex: 1,
         gap: '10px' // Space between dot and ID
     },
-    pulseDot: { 
-        width: '8px', 
-        height: '8px', 
-        backgroundColor: '#4ade80', 
+    pulseDot: {
+        width: '8px',
+        height: '8px',
+        backgroundColor: '#4ade80',
         borderRadius: '50%',
         animation: 'pulseDot 2s infinite ease-in-out',
         boxShadow: '0 0 8px rgba(74, 222, 128, 0.6)',
