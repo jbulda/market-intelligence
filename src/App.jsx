@@ -8,10 +8,10 @@ function App() {
         <div style={appStyles.main}>
             {/* Navigation Header */}
             <nav style={appStyles.nav}>
-                <NavLink to="/" style={{textDecoration: 'none'}}>
+                <NavLink to="/" style={{ textDecoration: 'none' }}>
                     <div style={appStyles.logo}>JERIC_OS_V3</div>
                 </NavLink>
-                
+
                 <div style={appStyles.links}>
                     {/* Points to the new TerminalWelcome landing page */}
                     <NavLink to="/" style={({ isActive }) => isActive ? appStyles.activeLink : appStyles.link}>
@@ -28,14 +28,13 @@ function App() {
                     </NavLink>
                 </div>
             </nav>
-
             <Routes>
                 {/* The "Home" is now your Welcome/Boot page */}
                 <Route path="/market-intelligence" element={<TerminalWelcome />} />
-                
+
                 {/* Dedicated route for the Market Terminal */}
                 <Route path="/market" element={<MarketTerminal />} />
-                
+
                 <Route path="/procurement" element={<AssetProcurement />} />
             </Routes>
         </div>

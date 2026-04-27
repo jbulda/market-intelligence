@@ -46,7 +46,7 @@ const GlitchStyles = () => (
 const AssetProcurement = () => {
     const [filter, setFilter] = useState('ALL');
     const [manifest, setManifest] = useState([]);
-    const [buildStatus, setBuildStatus] = useState('IDLE'); 
+    const [buildStatus, setBuildStatus] = useState('IDLE');
     const [bootLogs, setBootLogs] = useState([]);
 
     const categories = ['ALL', ...new Set(products.map(p => p.category))];
@@ -67,8 +67,8 @@ const AssetProcurement = () => {
     };
 
     const isSystemReady = manifest.some(p => p.category === 'CPU') &&
-                          manifest.some(p => p.category === 'GPU') &&
-                          manifest.some(p => p.category === 'POWER');
+        manifest.some(p => p.category === 'GPU') &&
+        manifest.some(p => p.category === 'POWER');
 
     const executeBuild = () => {
         setBootLogs([]);
@@ -199,7 +199,7 @@ const AssetProcurement = () => {
                             {buildStatus === 'BOOTING' ? (
                                 <div style={styles.terminalContainer}>
                                     <h2 className="glitch-animation" style={styles.glitchText}>
-                                      [ EXECUTING_BUILD_SEQUENCE ]
+                                        [ EXECUTING_BUILD_SEQUENCE ]
                                     </h2>
                                     <div style={styles.logContainer}>
                                         {bootLogs.map((log, i) => (
@@ -263,36 +263,50 @@ const styles = {
     filterBar: { display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '1px solid #1e293b', paddingBottom: '15px' },
     filterBtn: { background: 'none', border: 'none', borderBottom: '2px solid', cursor: 'pointer', fontSize: '0.7rem', padding: '5px' },
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' },
-    card: { 
-    backgroundColor: '#fff', 
-    border: '1px solid #4ade80', 
-    color: '#0b0e14',
-    display: 'flex',          // Added: Turn card into flex container
-    flexDirection: 'column',   // Added: Stack children vertically
-    height: '100%'            // Added: Ensure all cards in a row are equal height
-},
+    card: {
+        backgroundColor: '#fff',
+        border: '1px solid #4ade80',
+        color: '#0b0e14',
+        display: 'flex',          // Added: Turn card into flex container
+        flexDirection: 'column',   // Added: Stack children vertically
+        height: '100%'            // Added: Ensure all cards in a row are equal height
+    },
     cardHeader: { padding: '10px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', borderBottom: '1px solid #e2e8f0' },
     statusGroup: { display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8' },
     pulseDot: { width: '6px', height: '6px', backgroundColor: '#4ade80', borderRadius: '50%' },
     categoryLabel: { backgroundColor: '#0f172a', color: '#fff', padding: '2px 6px' },
-    content: { 
-    padding: '20px',
-    display: 'flex',          // Added: Turn content area into flex
-    flexDirection: 'column',   // Added: Stack children vertically
-    flex: 1                   // Added: Crucial! This pushes the footer down
-},
+    content: {
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
+        gap: '15px'               // Added: Standardizes spacing between title and specs
+    },
     brand: { fontSize: '0.65rem', color: '#64748b', textTransform: 'uppercase' },
-    name: { fontSize: '1.1rem', fontWeight: '900', margin: '10px 0' },
-    specBox: { backgroundColor: '#f1f5f9', padding: '12px', borderLeft: '3px solid #4ade80', marginBottom: '15px' },
+    name: {
+        fontSize: '1.1rem',
+        fontWeight: '900',
+        margin: 0,                // Changed: Remove default margins
+        flex: 1,                  // Added: This pushes the specBox down
+        display: 'flex',          // Added: Centers text vertically if needed
+        alignItems: 'flex-start'
+    },
+    specBox: {
+        backgroundColor: '#f1f5f9',
+        padding: '12px',
+        borderLeft: '3px solid #4ade80',
+        marginBottom: '15px',
+        minHeight: '120px',       // Added: Ensures all spec boxes have the same height
+    },
     specItem: { fontSize: '0.75rem', color: '#475569', marginBottom: '4px' },
-    footer: { 
-    display: 'flex', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    borderTop: '1px solid #f1f5f9', 
-    paddingTop: '15px',
-    marginTop: 'auto'         // Added: Double-insurance to stay at the bottom
-},
+    footer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderTop: '1px solid #f1f5f9',
+        paddingTop: '15px',
+        marginTop: 'auto'         // Added: Double-insurance to stay at the bottom
+    },
     price: { fontSize: '1.2rem', fontWeight: 'bold' },
     btn: { backgroundColor: '#0f172a', color: '#4ade80', border: '1px solid #4ade80', padding: '8px 12px', fontSize: '0.65rem', cursor: 'pointer' },
     manifestPanel: { width: '300px', backgroundColor: '#0f172a', border: '1px solid #4ade80', padding: '20px', display: 'flex', flexDirection: 'column', position: 'sticky', top: '40px', height: 'calc(100vh - 80px)' },
