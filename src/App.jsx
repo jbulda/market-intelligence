@@ -28,14 +28,14 @@ function App() {
                     </NavLink>
                 </div>
             </nav>
+
             <Routes>
-                {/* The "Home" is now your Welcome/Boot page */}
-                <Route path="/market-intelligence" element={<TerminalWelcome />} />
-
-                {/* Dedicated route for the Market Terminal */}
-                <Route path="/market" element={<MarketTerminal />} />
-
-                <Route path="/procurement" element={<AssetProcurement />} />
+                <Route path="/">
+                    <Route index element={<TerminalWelcome />} />
+                    <Route path="procurement" element={<AssetProcurement />} />
+                    {/* Dedicated route for the Market Terminal */}
+                    <Route path="market" element={<MarketTerminal />} />
+                </Route>
             </Routes>
         </div>
     );

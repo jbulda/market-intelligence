@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { products } from '../data/products';
+import LiveStatus from '../components/LiveStatus';
 
 const GlitchStyles = () => (
     <style>{`
@@ -11,33 +12,26 @@ const GlitchStyles = () => (
       80% { transform: translate(2px, -2px) }
       100% { transform: translate(0) }
     }
+    
+    @keyframes pulseDot {
+      0% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+      70% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+      100% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
     .glitch-animation {
       animation: glitch 0.3s infinite;
       text-shadow: 2px 0 #ff5f56, -2px 0 #27c93f;
     }
 
     @media print {
-      /* Hide the entire web app */
       body * { visibility: hidden; } 
-      
-      /* Only show the dashboard and its children */
       .print-area, .print-area * { visibility: visible; } 
-      
       .print-area { 
-        position: absolute; 
-        left: 0; 
-        top: 0; 
-        width: 100%; 
-        background: white !important;
-        padding: 20px;
+        position: absolute; left: 0; top: 0; width: 100%; 
+        background: white !important; padding: 20px;
       }
-
-      /* Fix colors for white paper */
-      .print-area h1, .print-area span, .print-area p, .print-area label {
-        color: black !important;
-      }
-      
-      /* Hide the buttons on the PDF */
+      .print-area h1, .print-area span, .print-area p, .print-area label { color: black !important; }
       .no-print { display: none !important; }
     }
   `}</style>
@@ -96,19 +90,22 @@ const AssetProcurement = () => {
         <div style={styles.pageContainer}>
             <GlitchStyles />
             <div style={styles.mainContent}>
-                <div style={styles.header}>
-                    <div>
-                        <h1 style={styles.glitch}>[ ASSET_PROCUREMENT_V3 ]</h1>
-                        <p style={styles.subText}>JERIC_OS // SPEC_VALIDATION_ACTIVE</p>
-                    </div>
-                    <div style={styles.statsBar}>
-                        <div style={styles.statItem}>
-                            <span style={styles.statLabel}>CATALOG_UNITS:</span>
-                            <span style={styles.statValue}>{filteredProducts.length}</span>
+                <div className="procurement-container">
+                    <LiveStatus />
+                    <div style={styles.header}>
+                        <div>
+                            <h1 style={styles.glitch}>[ ASSET_PROCUREMENT_V3 ]</h1>
+                            <p style={styles.subText}>JERIC_OS // SPEC_VALIDATION_ACTIVE</p>
                         </div>
-                        <div style={styles.statItem}>
-                            <span style={styles.statLabel}>MANIFEST_VALUE:</span>
-                            <span style={styles.statValue}>${totalValue.toLocaleString()}</span>
+                        <div style={styles.statsBar}>
+                            <div style={styles.statItem}>
+                                <span style={styles.statLabel}>CATALOG_UNITS:</span>
+                                <span style={styles.statValue}>{filteredProducts.length}</span>
+                            </div>
+                            <div style={styles.statItem}>
+                                <span style={styles.statLabel}>MANIFEST_VALUE:</span>
+                                <span style={styles.statValue}>${totalValue.toLocaleString()}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,7 +127,9 @@ const AssetProcurement = () => {
                     {filteredProducts.map(product => (
                         <div key={product.id} style={styles.card}>
                             <div style={styles.cardHeader}>
-                                <div style={styles.statusGroup}><div style={styles.pulseDot}></div>{product.id}</div>
+                                <div style={styles.statusGroup}><div style={styles.pulseDot}></div>
+                                <span style={styles.idText}>{product.id}</span>
+                            </div>
                                 <span style={styles.categoryLabel}>{product.category}</span>
                             </div>
                             <div style={styles.content}>
@@ -264,49 +263,38 @@ const styles = {
     filterBtn: { background: 'none', border: 'none', borderBottom: '2px solid', cursor: 'pointer', fontSize: '0.7rem', padding: '5px' },
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' },
     card: {
-        backgroundColor: '#fff',
-        border: '1px solid #4ade80',
-        color: '#0b0e14',
-        display: 'flex',          // Added: Turn card into flex container
-        flexDirection: 'column',   // Added: Stack children vertically
-        height: '100%'            // Added: Ensure all cards in a row are equal height
+        backgroundColor: '#fff', border: '1px solid #4ade80', color: '#0b0e14',
+        display: 'flex', flexDirection: 'column', height: '100%'
     },
     cardHeader: { padding: '10px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', borderBottom: '1px solid #e2e8f0' },
-    statusGroup: { display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8' },
-    pulseDot: { width: '6px', height: '6px', backgroundColor: '#4ade80', borderRadius: '50%' },
-    categoryLabel: { backgroundColor: '#0f172a', color: '#fff', padding: '2px 6px' },
-    content: {
-        padding: '20px',
-        display: 'flex',
-        flexDirection: 'column',
+    statusGroup: { 
+        display: 'flex', 
+        alignItems: 'center', 
         flex: 1,
-        gap: '15px'               // Added: Standardizes spacing between title and specs
+        gap: '10px' // Space between dot and ID
     },
+    pulseDot: { 
+        width: '8px', 
+        height: '8px', 
+        backgroundColor: '#4ade80', 
+        borderRadius: '50%',
+        animation: 'pulseDot 2s infinite ease-in-out',
+        boxShadow: '0 0 8px rgba(74, 222, 128, 0.6)',
+        flexShrink: 0 // Prevents the dot from squishing
+    },
+    idText: {
+        color: '#64748b',
+        fontFamily: 'monospace',
+        fontSize: '0.65rem',
+        letterSpacing: '0.5px'
+    },
+    categoryLabel: { backgroundColor: '#0f172a', color: '#fff', padding: '2px 6px' },
+    content: { padding: '20px', display: 'flex', flexDirection: 'column', flex: 1, gap: '15px' },
     brand: { fontSize: '0.65rem', color: '#64748b', textTransform: 'uppercase' },
-    name: {
-        fontSize: '1.1rem',
-        fontWeight: '900',
-        margin: 0,                // Changed: Remove default margins
-        flex: 1,                  // Added: This pushes the specBox down
-        display: 'flex',          // Added: Centers text vertically if needed
-        alignItems: 'flex-start'
-    },
-    specBox: {
-        backgroundColor: '#f1f5f9',
-        padding: '12px',
-        borderLeft: '3px solid #4ade80',
-        marginBottom: '15px',
-        minHeight: '120px',       // Added: Ensures all spec boxes have the same height
-    },
+    name: { fontSize: '1.1rem', fontWeight: '900', margin: 0, flex: 1, display: 'flex', alignItems: 'flex-start' },
+    specBox: { backgroundColor: '#f1f5f9', padding: '12px', borderLeft: '3px solid #4ade80', marginBottom: '15px', minHeight: '120px' },
     specItem: { fontSize: '0.75rem', color: '#475569', marginBottom: '4px' },
-    footer: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderTop: '1px solid #f1f5f9',
-        paddingTop: '15px',
-        marginTop: 'auto'         // Added: Double-insurance to stay at the bottom
-    },
+    footer: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '15px', marginTop: 'auto' },
     price: { fontSize: '1.2rem', fontWeight: 'bold' },
     btn: { backgroundColor: '#0f172a', color: '#4ade80', border: '1px solid #4ade80', padding: '8px 12px', fontSize: '0.65rem', cursor: 'pointer' },
     manifestPanel: { width: '300px', backgroundColor: '#0f172a', border: '1px solid #4ade80', padding: '20px', display: 'flex', flexDirection: 'column', position: 'sticky', top: '40px', height: 'calc(100vh - 80px)' },
@@ -320,47 +308,19 @@ const styles = {
     powerBarContainer: { height: '4px', backgroundColor: '#1e293b', marginTop: '10px' },
     powerBarFill: { height: '100%', transition: 'width 0.4s ease' },
     deployBtn: { width: '100%', padding: '12px', backgroundColor: '#4ade80', color: '#0b0e14', border: 'none', fontWeight: 'bold', cursor: 'pointer' },
-    overlay: {
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(5, 5, 5, 0.98)', display: 'flex',
-        alignItems: 'center', justifyContent: 'center', zIndex: 9999,
-        padding: '40px'
-    },
-    deploymentWindow: {
-        width: '100%', maxWidth: '800px',
-        border: '1px solid #4ade80', backgroundColor: '#0b0e14',
-        boxShadow: '0 0 50px rgba(74, 222, 128, 0.1)'
-    },
+    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(5, 5, 5, 0.98)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '40px' },
+    deploymentWindow: { width: '100%', maxWidth: '800px', border: '1px solid #4ade80', backgroundColor: '#0b0e14', boxShadow: '0 0 50px rgba(74, 222, 128, 0.1)' },
     terminalContainer: { padding: '40px' },
     logContainer: { marginTop: '20px', minHeight: '200px' },
     logText: { color: '#4ade80', fontFamily: 'monospace', marginBottom: '8px', fontSize: '0.9rem' },
     successDashboard: { padding: '40px', color: '#fff', fontFamily: 'monospace' },
     metricGroup: { display: 'flex', gap: '20px', margin: '30px 0' },
-    metricCard: {
-        flex: 1, padding: '20px', border: '1px solid #1e293b',
-        backgroundColor: '#0f172a', display: 'flex', flexDirection: 'column'
-    },
+    metricCard: { flex: 1, padding: '20px', border: '1px solid #1e293b', backgroundColor: '#0f172a', display: 'flex', flexDirection: 'column' },
     assetList: { borderTop: '1px solid #1e293b', paddingTop: '20px', marginBottom: '30px' },
-    assetRow: {
-        display: 'flex', justifyContent: 'space-between',
-        fontSize: '0.75rem', color: '#64748b', padding: '8px 0',
-        borderBottom: '1px solid #0f172a'
-    },
-    printBtn: {
-        backgroundColor: '#4ade80', color: '#0b0e14', border: 'none',
-        padding: '12px 24px', fontWeight: 'bold', cursor: 'pointer', marginRight: '15px'
-    },
-    returnBtn: {
-        backgroundColor: 'transparent', color: '#64748b', border: '1px solid #1e293b',
-        padding: '12px 24px', cursor: 'pointer'
-    },
-    glitchText: {
-        color: '#4ade80',
-        fontSize: '1.4rem',
-        fontFamily: 'monospace',
-        textAlign: 'center',
-        letterSpacing: '4px'
-    },
+    assetRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b', padding: '8px 0', borderBottom: '1px solid #0f172a' },
+    printBtn: { backgroundColor: '#4ade80', color: '#0b0e14', border: 'none', padding: '12px 24px', fontWeight: 'bold', cursor: 'pointer', marginRight: '15px' },
+    returnBtn: { backgroundColor: 'transparent', color: '#64748b', border: '1px solid #1e293b', padding: '12px 24px', cursor: 'pointer' },
+    glitchText: { color: '#4ade80', fontSize: '1.4rem', fontFamily: 'monospace', textAlign: 'center', letterSpacing: '4px' },
 };
 
 export default AssetProcurement;

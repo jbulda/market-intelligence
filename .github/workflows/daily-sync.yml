@@ -1,0 +1,30 @@
+name: Daily Price Sync
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  workflow_dispatch: # Allows you to run it manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install axios cheerio
+
+      - name: Run Scraper
+        run: node scripts/price-scraper.js
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "JericBot"
+          git config --global user.email "bot@jericbulda.com"
+          git add src/data/products.js
+          git commit -m "chore: auto-update component prices [skip ci]" || echo "No changes to commit"
+          git push
