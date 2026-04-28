@@ -8,9 +8,16 @@ function App() {
         <div style={appStyles.main}>
             {/* Navigation Header */}
             <nav style={appStyles.nav}>
-                <NavLink to="/" style={{ textDecoration: 'none' }}>
-                    <div style={appStyles.logo}>JERIC_OS_V3</div>
-                </NavLink>
+                <a
+                    href="https://jbulda.github.io/"
+                    style={appStyles.logoLink}
+                    onClick={(e) => {
+                        // Optional: This force-clears the hash just in case the browser tries to be too smart
+                        window.location.href = "https://jbulda.github.io/";
+                    }}
+                >
+                    JERIC_OS_V3
+                </a>
 
                 <div style={appStyles.links}>
                     {/* Points to the new TerminalWelcome landing page */}
@@ -52,6 +59,20 @@ const appStyles = {
         fontSize: '0.8rem',
         borderBottom: '1px solid #4ade80',
         paddingBottom: '5px'
+    },
+    logoLink: {
+        color: '#4ade80', // Keep your signature green
+        textDecoration: 'none',
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        letterSpacing: '1px',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+    },
+    // Optional: add a hover effect to show it's clickable
+    logoLinkHover: {
+        textShadow: '0 0 8px #4ade80',
+        opacity: 0.8
     }
 };
 
