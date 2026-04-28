@@ -33,7 +33,6 @@ function App() {
                 <Route path="/">
                     <Route index element={<TerminalWelcome />} />
                     <Route path="procurement" element={<AssetProcurement />} />
-                    {/* Dedicated route for the Market Terminal */}
                     <Route path="market" element={<MarketTerminal />} />
                 </Route>
             </Routes>
