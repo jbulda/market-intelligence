@@ -55,21 +55,51 @@ const GlitchStyles = () => (
             }
             
             .header-container h1 {
-                font-size: 1.1rem !important;
-                margin-top: 5px !important;
+                font-size: 1rem !important;
+                letter-spacing: 1px !important;
+                margin: 0 !important;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            .stats-bar {
+                display: flex !important;
+                flex-direction: row !important; /* Force side-by-side */
+                justify-content: space-around !important;
+                background: rgba(15, 23, 42, 0.8) !important;
+                border: 1px solid #1e293b !important;
+                padding: 8px !important;
+                width: 100% !important;
+                margin-top: 10px !important;
+            }
+
+            .stat-item {
+                text-align: center;
+            }
+
+            .stat-label {
+                font-size: 0.5rem !important;
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            .stat-value {
+                font-size: 0.8rem !important;
             }
 
             /* The Manifest Panel (The Fix for 'Not Visible') */
             .manifest-panel {
                 width: 100% !important;
-                position: relative !important; /* Remove the sticky desktop position */
+                box-sizing: border-box !important; /* CRITICAL: Adds padding/border INSIDE the width */
+                position: relative !important;
                 top: 0 !important;
                 height: auto !important;
                 margin-top: 30px;
-                border: 1px solid #4ade80 !important; /* Full border for visibility */
+                border: 1px solid #4ade80 !important;
                 background: #0f172a !important;
                 padding: 15px !important;
-                order: 2; /* Ensure it stays below the grid */
+                order: 2;
+                overflow: hidden; /* Prevents internal text from pushing the box out */
             }
 
             /* The Asset Grid */
@@ -107,6 +137,10 @@ const GlitchStyles = () => (
                 border: 1px solid #1e293b !important;
                 flex-grow: 1; /* Makes buttons fill the row width evenly */
                 text-align: center;
+            }
+
+            .subText {
+                visibility: hidden;
             }
         }
   `}</style>
@@ -169,8 +203,12 @@ const AssetProcurement = () => {
                     <LiveStatus />
                     <div style={styles.header} className="header-container">
                         <div>
-                            <h1 style={styles.glitch}>[ ASSET_PROCUREMENT_V3 ]</h1>
-                            <p style={styles.subText}>JERIC_OS // SPEC_VALIDATION_ACTIVE</p>
+                            <h1 style={styles.glitch}>
+                                {window.innerWidth < 768 ? '[ASSET_PROC]' : '[ASSET_PROCUREMENT_V3]'}
+                            </h1>
+                            <p style={styles.subText}>
+                                {window.innerWidth < 768 ? 'JERIC_OS' : 'JERIC_OS // SPEC_VALIDATION_ACTIVE'}
+                            </p>
                         </div>
                         <div style={styles.statsBar} className="stats-bar">
                             <div style={styles.statItem}>
@@ -187,12 +225,15 @@ const AssetProcurement = () => {
 
                 <div style={styles.filterBar} className="filter-bar">
                     {categories.map(cat => (
-                        <button key={cat} onClick={() => setFilter(cat)}
+                        <button
+                            key={cat}
+                            onClick={() => setFilter(cat)}
                             style={{
                                 ...styles.filterBtn,
                                 color: filter === cat ? '#4ade80' : '#475569',
                                 borderColor: filter === cat ? '#4ade80' : 'transparent'
-                            }}>
+                            }}
+                        >
                             {cat}
                         </button>
                     ))}
@@ -240,7 +281,7 @@ const AssetProcurement = () => {
                 </div>
             </div>
 
-            <div style={styles.manifestPanel}>
+            <div style={styles.manifestPanel} class="manifest-panel">
                 <h2 style={styles.manifestTitle}>[ SYSTEM_MANIFEST ]</h2>
                 <div style={{ ...styles.statusIndicator, borderColor: isSystemReady ? '#4ade80' : '#f87171' }}>
                     <span style={{ color: isSystemReady ? '#4ade80' : '#f87171', fontSize: '0.7rem' }}>
