@@ -2,165 +2,6 @@ import React, { useState } from 'react';
 import { products } from '../data/products';
 import LiveStatus from '../components/LiveStatus';
 
-const GlitchStyles = () => (
-    <style>{`
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
-        }
-        
-        @keyframes pulseDot {
-            0% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
-            70% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
-            100% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-        }
-
-        .glitch-animation {
-            animation: glitch 0.3s infinite;
-            text-shadow: 2px 0 #ff5f56, -2px 0 #27c93f;
-        }
-
-        @media print {
-            body * { visibility: hidden; } 
-            .print-area, .print-area * { visibility: visible; } 
-            .print-area { 
-                position: absolute; left: 0; top: 0; width: 100%; 
-                background: white !important; padding: 20px;
-            }
-            .print-area h1, .print-area span, .print-area p, .print-area label { color: black !important; }
-            .no-print { display: none !important; }
-        }
-
-        @media (max-width: 768px) {
-            /* Reset the main layout to vertical */
-            .page-container {
-                flex-direction: column !important;
-                padding: 10px !important;
-                height: auto !important; /* Allow page to grow */
-                overflow-x: hidden;
-            }
-
-            /* Main content takes full width now */
-            .main-content {
-                width: 100% !important;
-            }
-
-            /* Header Compression */
-            .header-container {
-                margin-bottom: 15px !important;
-            }
-            
-            .header-container h1 {
-                font-size: 1rem !important;
-                letter-spacing: 1px !important;
-                margin: 0 !important;
-                display: flex;
-                flex-wrap: wrap;
-            }
-            
-            .stats-bar {
-                display: flex !important;
-                flex-direction: row !important; /* Force side-by-side */
-                justify-content: space-around !important;
-                background: rgba(15, 23, 42, 0.8) !important;
-                border: 1px solid #1e293b !important;
-                padding: 8px !important;
-                width: 100% !important;
-                margin-top: 10px !important;
-            }
-
-            .stat-item {
-                text-align: center;
-            }
-
-            .stat-label {
-                font-size: 0.5rem !important;
-                display: block;
-                margin-bottom: 2px;
-            }
-
-            .stat-value {
-                font-size: 0.8rem !important;
-            }
-
-            /* The Manifest Panel (The Fix for 'Not Visible') */
-            .manifest-panel {
-                width: 100% !important;
-                box-sizing: border-box !important; /* CRITICAL: Adds padding/border INSIDE the width */
-                position: relative !important;
-                top: 0 !important;
-                height: auto !important;
-                margin-top: 30px;
-                border: 1px solid #4ade80 !important;
-                background: #0f172a !important;
-                padding: 15px !important;
-                order: 2;
-                overflow: hidden; /* Prevents internal text from pushing the box out */
-            }
-
-            /* The Asset Grid */
-            .asset-grid {
-                grid-template-columns: 1fr !important; /* Single card per row */
-                gap: 15px !important;
-                order: 1;
-            }
-
-            /* Card Scaling */
-            .asset-card {
-                width: 100% !important;
-            }
-            
-            .spec-box {
-                min-height: auto !important;
-                font-size: 0.7rem;
-            }
-
-            /* Allow filters to wrap into multiple rows */
-            .filter-bar {
-                display: flex !important;
-                flex-wrap: wrap !important; /* This is the key fix */
-                gap: 8px !important;
-                justify-content: flex-start;
-                border-bottom: none !important; /* Remove line to save space */
-                padding-bottom: 5px !important;
-            }
-
-            /* Make filter buttons slightly larger and easier to tap */
-            .filter-bar button {
-                font-size: 0.65rem !important;
-                padding: 6px 10px !important;
-                background: rgba(30, 41, 59, 0.5) !important;
-                border: 1px solid #1e293b !important;
-                flex-grow: 1; /* Makes buttons fill the row width evenly */
-                text-align: center;
-            }
-
-            .subText {
-                visibility: hidden;
-            }
-
-            .glitch-animation {
-                font-size: 1.2rem !important; /* Scale down */
-                white-space: normal !important; /* Allow wrapping if needed */
-                word-break: break-word !important;
-                text-align: center;
-                width: 100%;
-            }
-
-            .deployment-window h1 {
-                font-size: 1.1rem !important;
-                line-height: 1.3 !important;
-                word-break: break-all !important; /* Force break at underscores if necessary */
-                letter-spacing: 0px !important; /* Tighten up spacing */
-            }
-        }
-  `}</style>
-);
-
 const AssetProcurement = () => {
     const [filter, setFilter] = useState('ALL');
     const [manifest, setManifest] = useState([]);
@@ -212,7 +53,6 @@ const AssetProcurement = () => {
 
     return (
         <div style={styles.pageContainer} className="page-container">
-            <GlitchStyles />
             <div style={styles.mainContent} >
                 <div className="procurement-container">
                     <LiveStatus />
@@ -337,9 +177,15 @@ const AssetProcurement = () => {
                         <div style={styles.deploymentWindow}>
                             {buildStatus === 'BOOTING' ? (
                                 <div style={styles.terminalContainer}>
-                                    <h2 className="glitch-animation" style={styles.glitchText}>
-                                        [EXECUTING] 
-                                        [BUILD_SEQUENCE]
+                                    <h2 className="glitch-animation" style={{
+                                        ...styles.glitchText,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        gap: '5px'
+                                    }}>
+                                        <span>[ EXECUTING ]</span>
+                                        <span>[ BUILD_SEQUENCE ]</span>
                                     </h2>
                                     <div style={styles.logContainer}>
                                         {bootLogs.map((log, i) => (
