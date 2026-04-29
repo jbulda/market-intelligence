@@ -7,8 +7,8 @@ const TerminalWelcome = () => {
 
     const bootSequence = [
         "INITIATING JERIC_OS_V3.0.4...",
-        "LOADING SAP_UI5_CORE_LIBRARIES...",
-        "ESTABLISHING BTP_SECURE_TUNNEL...",
+        "LOADING CORE_LIBRARIES...",
+        "ESTABLISHING SECURE_TUNNEL...",
         "MOUNTING VOLUMES: [DOCUMENTS, PROJECTS, ASSETS]",
         "SYSTEM_CHECK: OPTIMAL",
         "WELCOME, SENIOR DEVELOPER."

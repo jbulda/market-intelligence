@@ -142,6 +142,21 @@ const GlitchStyles = () => (
             .subText {
                 visibility: hidden;
             }
+
+            .glitch-animation {
+                font-size: 1.2rem !important; /* Scale down */
+                white-space: normal !important; /* Allow wrapping if needed */
+                word-break: break-word !important;
+                text-align: center;
+                width: 100%;
+            }
+
+            .deployment-window h1 {
+                font-size: 1.1rem !important;
+                line-height: 1.3 !important;
+                word-break: break-all !important; /* Force break at underscores if necessary */
+                letter-spacing: 0px !important; /* Tighten up spacing */
+            }
         }
   `}</style>
 );
@@ -313,8 +328,7 @@ const AssetProcurement = () => {
                 <button
                     disabled={!isSystemReady}
                     onClick={executeBuild}
-                    style={{ ...styles.deployBtn, opacity: isSystemReady ? 1 : 0.5 }}
-                >
+                    style={{ ...styles.deployBtn, opacity: isSystemReady ? 1 : 0.5 }}>
                     EXECUTE_BUILD_SEQUENCE
                 </button>
 
@@ -324,7 +338,8 @@ const AssetProcurement = () => {
                             {buildStatus === 'BOOTING' ? (
                                 <div style={styles.terminalContainer}>
                                     <h2 className="glitch-animation" style={styles.glitchText}>
-                                        [ EXECUTING_BUILD_SEQUENCE ]
+                                        [EXECUTING] 
+                                        [BUILD_SEQUENCE]
                                     </h2>
                                     <div style={styles.logContainer}>
                                         {bootLogs.map((log, i) => (
@@ -335,7 +350,7 @@ const AssetProcurement = () => {
                             ) : (
                                 <div className="print-area" style={styles.successDashboard}>
                                     <div style={styles.successHeader}>
-                                        <h1 style={{ color: '#4ade80', margin: 0 }}>SYSTEM_DEPLOYED_SUCCESSFULLY</h1>
+                                        <h1 style={{ color: '#4ade80', margin: 0 }}>SYSTEM_DEPLOYED</h1>
                                         <p style={{ color: '#64748b' }}>CONFIGURATION_ID: {Math.random().toString(36).toUpperCase().substring(7)}</p>
                                     </div>
 
