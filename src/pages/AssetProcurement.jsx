@@ -98,29 +98,32 @@ const AssetProcurement = () => {
                     {filteredProducts.map(product => (
                         <div key={product.id} style={styles.card}>
                             <div style={styles.cardHeader}>
-                                <div style={styles.statusGroup}><div style={styles.pulseDot}></div>
+                                <div style={styles.statusGroup}>
+                                    <div style={styles.pulseDot}></div>
                                     <span style={styles.idText}>{product.id}</span>
                                 </div>
                                 <span style={styles.categoryLabel}>{product.category}</span>
                             </div>
+                            
                             <div style={styles.content}>
-                                <p style={styles.brand}>{product.brand}</p>
-                                <h3 style={styles.name}>{product.name}</h3>
-                                <div style={styles.card}>
-                                    {product.image && (
-                                        <div style={styles.imageWrapper}>
-                                            <img
-                                                src={product.image}
-                                                alt={product.id}
-                                                style={styles.productImg}
-                                            />
-                                        </div>
-                                    )}
-                                    <div style={styles.details}>
-                                        <h3>{product.id}</h3>
-                                        <p style={styles.price}>${product.price.toFixed(2)}</p>
-                                    </div>
+                                {/* HEADER: Fixed height for alignment */}
+                                <div style={styles.contentHeader}>
+                                    <p style={styles.brand}>{product.brand}</p>
+                                    <h3 style={styles.productTitle}>{product.name}</h3>
                                 </div>
+
+                                {/* IMAGE: Fixed viewport */}
+                                {product.image && (
+                                    <div style={styles.imageWrapper}>
+                                        <img
+                                            src={product.image}
+                                            alt={product.id}
+                                            style={styles.productImg}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* UPLINK */}
                                 <div style={styles.actionArea}>
                                     <a
                                         href={product.url}
@@ -131,25 +134,26 @@ const AssetProcurement = () => {
                                         [ VIEW_UPLINK ]
                                     </a>
                                 </div>
-                                <div style={styles.specBox}>
-                                    {product.specs.map(spec => (
-                                        <div key={spec} style={styles.specItem}>
-                                            <span style={{ color: '#4ade80', marginRight: '8px' }}>{">"}</span>
-                                            {spec}
-                                        </div>
+
+                                {/* SPECS: Fixed scrollable height */}
+                                <div style={styles.specContainer}>
+                                    {product.specs && product.specs.map((spec, index) => (
+                                        <p key={index} style={styles.specItem}>
+                                            <span style={{ color: '#4ade80' }}>&gt;</span> {spec}
+                                        </p>
                                     ))}
                                 </div>
+
+                                {/* FOOTER: Price and Procure Button */}
                                 <div style={styles.footer}>
-                                    <span style={styles.price}>${product.price}</span>
+                                    <span style={styles.price}>${product.price.toFixed(2)}</span>
                                     <button
                                         onClick={() => toggleProcure(product)}
                                         style={{
                                             ...styles.btn,
-                                            // Dynamic color inversion
                                             backgroundColor: manifest.find(m => m.id === product.id) ? '#4ade80' : '#0f172a',
                                             color: manifest.find(m => m.id === product.id) ? '#0b0e14' : '#4ade80',
-                                            fontWeight: manifest.find(m => m.id === product.id) ? 'bold' : 'normal',
-                                            transition: 'all 0.2s ease' // Smooth transition for the inversion
+                                            fontWeight: manifest.find(m => m.id === product.id) ? 'bold' : 'normal'
                                         }}
                                     >
                                         {manifest.find(m => m.id === product.id) ? 'COMMITTED' : 'PROCURE'}
@@ -161,7 +165,8 @@ const AssetProcurement = () => {
                 </div>
             </div>
 
-            <div style={styles.manifestPanel} class="manifest-panel">
+            {/* MANIFEST PANEL */}
+            <div style={styles.manifestPanel}>
                 <h2 style={styles.manifestTitle}>[ SYSTEM_MANIFEST ]</h2>
                 <div style={{ ...styles.statusIndicator, borderColor: isSystemReady ? '#4ade80' : '#f87171' }}>
                     <span style={{ color: isSystemReady ? '#4ade80' : '#f87171', fontSize: '0.7rem' }}>
@@ -196,21 +201,16 @@ const AssetProcurement = () => {
                     style={{ ...styles.deployBtn, opacity: isSystemReady ? 1 : 0.5 }}>
                     EXECUTE_BUILD_SEQUENCE
                 </button>
-
+                
+                {/* DEPLOYMENT OVERLAY */}
                 {buildStatus !== 'IDLE' && (
                     <div style={styles.overlay}>
                         <div style={styles.deploymentWindow}>
                             {buildStatus === 'BOOTING' ? (
                                 <div style={styles.terminalContainer}>
-                                    <h2 className="glitch-animation" style={{
-                                        ...styles.glitchText,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: '5px'
-                                    }}>
-                                        <span>[ EXECUTING ]</span>
-                                        <span>[ BUILD_SEQUENCE ]</span>
+                                    <h2 style={styles.glitchText}>
+                                        <div>[ EXECUTING ]</div>
+                                        <div>[ BUILD_SEQUENCE ]</div>
                                     </h2>
                                     <div style={styles.logContainer}>
                                         {bootLogs.map((log, i) => (
@@ -219,12 +219,11 @@ const AssetProcurement = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="print-area" style={styles.successDashboard}>
+                                <div style={styles.successDashboard}>
                                     <div style={styles.successHeader}>
                                         <h1 style={{ color: '#4ade80', margin: 0 }}>SYSTEM_DEPLOYED</h1>
                                         <p style={{ color: '#64748b' }}>CONFIGURATION_ID: {Math.random().toString(36).toUpperCase().substring(7)}</p>
                                     </div>
-
                                     <div style={styles.dashboardBody}>
                                         <div style={styles.metricGroup}>
                                             <div style={styles.metricCard}>
@@ -236,7 +235,6 @@ const AssetProcurement = () => {
                                                 <span>{totalWattage}W / {psuCapacity}W</span>
                                             </div>
                                         </div>
-
                                         <div style={styles.assetList}>
                                             <label style={styles.listLabel}>COMMITTED_ASSETS:</label>
                                             {manifest.map(item => (
@@ -247,8 +245,7 @@ const AssetProcurement = () => {
                                             ))}
                                         </div>
                                     </div>
-
-                                    <div className="no-print" style={styles.dashboardFooter}>
+                                    <div style={styles.dashboardFooter}>
                                         <button onClick={() => window.print()} style={styles.printBtn}>[ EXPORT_MANIFEST_PDF ]</button>
                                         <button onClick={() => setBuildStatus('IDLE')} style={styles.returnBtn}>RETURN_TO_TERMINAL</button>
                                     </div>
@@ -272,43 +269,36 @@ const styles = {
     statLabel: { fontSize: '0.6rem', color: '#64748b', display: 'block' },
     statValue: { fontSize: '1rem', color: '#fff' },
     filterBar: { display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '1px solid #1e293b', paddingBottom: '15px' },
-    filterBtn: { background: 'none', border: 'none', borderBottom: '2px solid', cursor: 'pointer', fontSize: '0.7rem', padding: '5px' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' },
-    card: {
-        backgroundColor: '#fff', border: '1px solid #4ade80', color: '#0b0e14',
-        display: 'flex', flexDirection: 'column', height: '100%'
+    filterBtn: { background: 'none', border: 'none', borderBottom: '2px solid', cursor: 'pointer', fontSize: '0.7rem', padding: '5px', transition: 'all 0.2s' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '25px' },
+    card: { 
+        backgroundColor: '#fff', border: '1px solid #4ade80', color: '#0b0e14', 
+        display: 'flex', flexDirection: 'column', height: '100%', minHeight: '720px' 
     },
     cardHeader: { padding: '10px', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', borderBottom: '1px solid #e2e8f0' },
-    statusGroup: {
-        display: 'flex',
-        alignItems: 'center',
-        flex: 1,
-        gap: '10px' // Space between dot and ID
-    },
-    pulseDot: {
-        width: '8px',
-        height: '8px',
-        backgroundColor: '#4ade80',
-        borderRadius: '50%',
-        animation: 'pulseDot 2s infinite ease-in-out',
-        boxShadow: '0 0 8px rgba(74, 222, 128, 0.6)',
-        flexShrink: 0 // Prevents the dot from squishing
-    },
-    idText: {
-        color: '#64748b',
-        fontFamily: 'monospace',
-        fontSize: '0.65rem',
-        letterSpacing: '0.5px'
-    },
+    statusGroup: { display: 'flex', alignItems: 'center', gap: '10px' },
+    pulseDot: { width: '8px', height: '8px', backgroundColor: '#4ade80', borderRadius: '50%', boxShadow: '0 0 8px rgba(74, 222, 128, 0.6)' },
+    idText: { color: '#64748b', fontFamily: 'monospace' },
     categoryLabel: { backgroundColor: '#0f172a', color: '#fff', padding: '2px 6px' },
-    content: { padding: '20px', display: 'flex', flexDirection: 'column', flex: 1, gap: '15px' },
-    brand: { fontSize: '0.65rem', color: '#64748b', textTransform: 'uppercase' },
-    name: { fontSize: '1.1rem', fontWeight: '900', margin: 0, flex: 1, display: 'flex', alignItems: 'flex-start' },
-    specBox: { backgroundColor: '#f1f5f9', padding: '12px', borderLeft: '3px solid #4ade80', marginBottom: '15px', minHeight: '120px' },
-    specItem: { fontSize: '0.75rem', color: '#475569', marginBottom: '4px' },
+    content: { padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 },
+    contentHeader: { height: '70px', marginBottom: '15px' },
+    brand: { fontSize: '0.65rem', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' },
+    productTitle: { fontSize: '1rem', fontWeight: '900', margin: 0, lineHeight: '1.2', color: '#0b0e14' },
+    imageWrapper: { 
+        height: '200px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', 
+        border: '1px solid rgba(74, 222, 128, 0.2)', background: 'rgba(0,0,0,0.02)', padding: '10px', boxSizing: 'border-box' 
+    },
+    productImg: { maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' },
+    actionArea: { padding: '15px 0', textAlign: 'center' },
+    procureButton: { 
+        display: 'block', color: '#4ade80', textDecoration: 'none', fontSize: '0.65rem', padding: '8px', 
+        border: '1px solid #4ade80', backgroundColor: '#0f172a', transition: 'all 0.2s' 
+    },
+    specContainer: { height: '140px', overflowY: 'auto', backgroundColor: '#94a3b8', padding: '12px', borderRadius: '4px', marginBottom: '15px' },
+    specItem: { fontSize: '0.65rem', color: '#0f172a', margin: '0 0 6px 0', fontFamily: 'monospace', lineHeight: '1.4', whiteSpace: 'pre-wrap' },
     footer: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '15px', marginTop: 'auto' },
-    price: { fontSize: '1.2rem', fontWeight: 'bold' },
-    btn: { backgroundColor: '#0f172a', color: '#4ade80', border: '1px solid #4ade80', padding: '8px 12px', fontSize: '0.65rem', cursor: 'pointer' },
+    price: { fontSize: '1.1rem', fontWeight: 'bold' },
+    btn: { border: '1px solid #4ade80', padding: '8px 16px', fontSize: '0.65rem', cursor: 'pointer', transition: 'all 0.2s' },
     manifestPanel: { width: '300px', backgroundColor: '#0f172a', border: '1px solid #4ade80', padding: '20px', display: 'flex', flexDirection: 'column', position: 'sticky', top: '40px', height: 'calc(100vh - 80px)' },
     manifestTitle: { fontSize: '0.9rem', color: '#4ade80', marginBottom: '15px' },
     statusIndicator: { padding: '10px', backgroundColor: 'rgba(0,0,0,0.3)', borderLeft: '3px solid', marginBottom: '20px' },
@@ -320,54 +310,20 @@ const styles = {
     powerBarContainer: { height: '4px', backgroundColor: '#1e293b', marginTop: '10px' },
     powerBarFill: { height: '100%', transition: 'width 0.4s ease' },
     deployBtn: { width: '100%', padding: '12px', backgroundColor: '#4ade80', color: '#0b0e14', border: 'none', fontWeight: 'bold', cursor: 'pointer' },
-    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(5, 5, 5, 0.98)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '40px' },
-    deploymentWindow: { width: '100%', maxWidth: '800px', border: '1px solid #4ade80', backgroundColor: '#0b0e14', boxShadow: '0 0 50px rgba(74, 222, 128, 0.1)' },
+    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(5, 5, 5, 0.98)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 },
+    deploymentWindow: { width: '90%', maxWidth: '800px', border: '1px solid #4ade80', backgroundColor: '#0b0e14' },
     terminalContainer: { padding: '40px' },
     logContainer: { marginTop: '20px', minHeight: '200px' },
-    logText: { color: '#4ade80', fontFamily: 'monospace', marginBottom: '8px', fontSize: '0.9rem' },
-    successDashboard: { padding: '40px', color: '#fff', fontFamily: 'monospace' },
+    logText: { color: '#4ade80', fontFamily: 'monospace', marginBottom: '8px', fontSize: '0.85rem' },
+    glitchText: { color: '#4ade80', fontSize: '1.4rem', textAlign: 'center', letterSpacing: '4px' },
+    successDashboard: { padding: '40px' },
     metricGroup: { display: 'flex', gap: '20px', margin: '30px 0' },
-    metricCard: { flex: 1, padding: '20px', border: '1px solid #1e293b', backgroundColor: '#0f172a', display: 'flex', flexDirection: 'column' },
-    assetList: { borderTop: '1px solid #1e293b', paddingTop: '20px', marginBottom: '30px' },
-    assetRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b', padding: '8px 0', borderBottom: '1px solid #0f172a' },
+    metricCard: { flex: 1, padding: '20px', border: '1px solid #1e293b', backgroundColor: '#0f172a' },
+    assetList: { borderTop: '1px solid #1e293b', paddingTop: '20px' },
+    assetRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b', padding: '8px 0' },
+    dashboardFooter: { marginTop: '30px', display: 'flex' },
     printBtn: { backgroundColor: '#4ade80', color: '#0b0e14', border: 'none', padding: '12px 24px', fontWeight: 'bold', cursor: 'pointer', marginRight: '15px' },
-    returnBtn: { backgroundColor: 'transparent', color: '#64748b', border: '1px solid #1e293b', padding: '12px 24px', cursor: 'pointer' },
-    glitchText: { color: '#4ade80', fontSize: '1.4rem', fontFamily: 'monospace', textAlign: 'center', letterSpacing: '4px' },
-    imageWrapper: {
-        width: '100%',
-        height: '150px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: '#fff', // White background often looks better for product cutouts
-        borderRadius: '4px',
-        marginBottom: '10px',
-        overflow: 'hidden'
-    },
-    productImg: {
-        maxHeight: '100%',
-        maxWidth: '100%',
-        objectFit: 'contain'
-    },
-    actionArea: {
-        marginTop: '15px',
-        borderTop: '1px style #1e293b',
-        paddingTop: '10px',
-        textAlign: 'center'
-    },
-    procureButton: {
-        display: 'inline-block',
-        color: '#4ade80', // Terminal Green
-        textDecoration: 'none',
-        fontSize: '0.7rem',
-        fontFamily: 'monospace',
-        padding: '5px 10px',
-        border: '1px solid #4ade80',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer',
-        width: '100%',
-        boxSizing: 'border-box'
-    }
+    returnBtn: { backgroundColor: 'transparent', color: '#64748b', border: '1px solid #1e293b', padding: '12px 24px', cursor: 'pointer' }
 };
 
 export default AssetProcurement;
