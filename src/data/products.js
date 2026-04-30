@@ -1,10 +1,10 @@
 
-export const syncMetadata = {
-    "lastSync": "2026-04-30T18:31:22.958Z",
+        export const syncMetadata = {
+    "lastSync": "2026-04-30T18:44:11.521Z",
     "status": "success",
     "itemsTracked": 20
 };
-export const products = [
+        export const products = [
     {
         "id": "CPU-9800X3D",
         "name": "AMD Ryzen 7 9800X3D",
