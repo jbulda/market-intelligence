@@ -2,7 +2,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import fs from 'fs';
-import { products } from '../src/data/products.js';
+import { products } from '../data/products.js';
 
 async function updatePrices() {
     console.log("Starting price sync...");
@@ -12,18 +12,27 @@ async function updatePrices() {
 
         try {
             const { data } = await axios.get(product.url, {
-                headers: { 'User-Agent': 'Mozilla/5.0' } // Prevents basic bot blocking
+                headers: { 'User-Agent': 'Mozilla/5.0' }
             });
             const $ = cheerio.load(data);
 
-            // Newegg Canada price selector
+            // 1. Price Logic
             const priceText = $('.price-current strong').first().text().replace(',', '');
             const centsText = $('.price-current sup').first().text() || "00";
 
+            // 2. Image Logic - Using the class from your screenshot
+            // We target the class 'product-view-img-original'
+            const imgPath = $('.product-view-img-original').attr('src');
+
             if (priceText) {
-                const newPrice = parseFloat(`${priceText}${centsText}`);
-                console.log(`Updated ${product.id}: $${newPrice}`);
-                product.price = newPrice;
+                product.price = parseFloat(`${priceText}${centsText}`);
+
+                if (imgPath) {
+                    // Ensure the URL is absolute
+                    product.image = imgPath.startsWith('http') ? imgPath : `https:${imgPath}`;
+                }
+
+                console.log(`Updated ${product.id}: $${product.price} | Img: ${!!product.image}`);
             }
         } catch (err) {
             console.error(`Failed to fetch ${product.id}:`, err.message);

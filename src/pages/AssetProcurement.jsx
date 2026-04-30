@@ -106,6 +106,31 @@ const AssetProcurement = () => {
                             <div style={styles.content}>
                                 <p style={styles.brand}>{product.brand}</p>
                                 <h3 style={styles.name}>{product.name}</h3>
+                                <div style={styles.card}>
+                                    {product.image && (
+                                        <div style={styles.imageWrapper}>
+                                            <img
+                                                src={product.image}
+                                                alt={product.id}
+                                                style={styles.productImg}
+                                            />
+                                        </div>
+                                    )}
+                                    <div style={styles.details}>
+                                        <h3>{product.id}</h3>
+                                        <p style={styles.price}>${product.price.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                                <div style={styles.actionArea}>
+                                    <a
+                                        href={product.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={styles.procureButton}
+                                    >
+                                        [ VIEW_UPLINK ]
+                                    </a>
+                                </div>
                                 <div style={styles.specBox}>
                                     {product.specs.map(spec => (
                                         <div key={spec} style={styles.specItem}>
@@ -308,6 +333,41 @@ const styles = {
     printBtn: { backgroundColor: '#4ade80', color: '#0b0e14', border: 'none', padding: '12px 24px', fontWeight: 'bold', cursor: 'pointer', marginRight: '15px' },
     returnBtn: { backgroundColor: 'transparent', color: '#64748b', border: '1px solid #1e293b', padding: '12px 24px', cursor: 'pointer' },
     glitchText: { color: '#4ade80', fontSize: '1.4rem', fontFamily: 'monospace', textAlign: 'center', letterSpacing: '4px' },
+    imageWrapper: {
+        width: '100%',
+        height: '150px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: '#fff', // White background often looks better for product cutouts
+        borderRadius: '4px',
+        marginBottom: '10px',
+        overflow: 'hidden'
+    },
+    productImg: {
+        maxHeight: '100%',
+        maxWidth: '100%',
+        objectFit: 'contain'
+    },
+    actionArea: {
+        marginTop: '15px',
+        borderTop: '1px style #1e293b',
+        paddingTop: '10px',
+        textAlign: 'center'
+    },
+    procureButton: {
+        display: 'inline-block',
+        color: '#4ade80', // Terminal Green
+        textDecoration: 'none',
+        fontSize: '0.7rem',
+        fontFamily: 'monospace',
+        padding: '5px 10px',
+        border: '1px solid #4ade80',
+        transition: 'all 0.2s ease',
+        cursor: 'pointer',
+        width: '100%',
+        boxSizing: 'border-box'
+    }
 };
 
 export default AssetProcurement;
